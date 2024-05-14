@@ -5,6 +5,8 @@ on:
       - main
 jobs:
   compare-artifacts:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Main Branch
