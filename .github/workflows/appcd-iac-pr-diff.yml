@@ -52,7 +52,6 @@ jobs:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
         run: |
-          docker pull ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.0
           mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/
           docker run --rm \
           --workdir=/code  \
