@@ -33,8 +33,7 @@ jobs:
           ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
           generate --mode ci --lang Python --log 2 --output=/artifact/main/.appcd/charts --iac-type Helm
           cd artifact/main/.appcd/charts
-          ls -latr
-          unzip scan.zip && rm scan.zip && ls -latr
+          unzip scan.zip && rm scan.zip && ls -latr && pwd
       - name: Upload logs
         uses: actions/upload-artifact@v2
         with:
@@ -100,7 +99,6 @@ jobs:
           cd ..
           mv artifact/${{ steps.extract_branch.outputs.branch }}/.appcd pr_branch/deployment_files/
           cd pr_branch
-          git add deployment_files/
           git diff --output=../diff.txt deployment_files/ | cat
           cat ../diff.txt
       - name: Comment PR with IaC Changes
