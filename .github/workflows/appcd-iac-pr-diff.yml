@@ -23,7 +23,7 @@ jobs:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
         run: |
-          mkdir -p artifact/main/
+          mkdir -p artifact/main/ ./tmp
           docker run --rm \
             --workdir=/app/scan  \
             -e APPCD_TOKEN=$APPCD_TOKEN \
@@ -57,7 +57,7 @@ jobs:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
         run: |
-          mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/
+          mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/ ./tmp
           docker run --rm \
             --workdir=/app/scan  \
             -v ./pr_branch/:/app/scan \
