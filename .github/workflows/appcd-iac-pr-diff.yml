@@ -19,16 +19,22 @@ jobs:
       - name: Login to docker
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
       - name: Generate IaC from Main Branch
+        env:
+          APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
+          APPCD_URL: ${{ secrets.APPCD_URL }}
         run: |
           mkdir -p artifact/main/
           docker run --rm \
             --workdir=/code  \
+            -e APPCD_TOKEN=$APPCD_TOKEN \
+            -e APPCD_URL=$APPCD_URL \
             -v ./main_branch:/code \
             -v ./artifact/main:/artifact/main \
             --entrypoint=appcd \
           ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
-          generate --lang Python --output=artifact/main/.appcd/charts --iac-type Helm
+          generate --mode ci --lang Python --output=/artifact/main/.appcd/charts --iac-type Helm
           cd artifact/main/.appcd/charts
+          ls -latr
           unzip DogeAPI.zip && rm DogeAPI.zip
       - name: Checkout PR Branch
         uses: actions/checkout@v4
@@ -42,6 +48,9 @@ jobs:
       - name: echo branch name
         run: echo ${{ steps.extract_branch.outputs.branch }}
       - name: Generate IaC from PR branch
+        env:
+          APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
+          APPCD_URL: ${{ secrets.APPCD_URL }}
         run: |
           docker pull ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.0
           mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/
@@ -49,9 +58,11 @@ jobs:
           --workdir=/code  \
           -v ./pr_branch/:/code \
           -v ./artifact/${{ steps.extract_branch.outputs.branch }}:/artifact/${{ steps.extract_branch.outputs.branch }} \
+          -e APPCD_TOKEN=$APPCD_TOKEN \
+          -e APPCD_URL=$APPCD_URL \
           --entrypoint=appcd \
           ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
-          generate --lang Python --iac-type Helm --output=artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
+          generate --mode ci --lang Python --iac-type Helm --output=/artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
           cd artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
           unzip DogeAPI.zip && rm DogeAPI.zip
       - name: Copy infrastructure files if empty
