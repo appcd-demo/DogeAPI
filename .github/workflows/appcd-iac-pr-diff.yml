@@ -25,7 +25,7 @@ jobs:
             --workdir=/code  \
             -v ./main_branch:/code \
             -v ./artifact/main:/artifact/main \
-          ghcr.io/appcd-dev/appcd-dist/appcd@v0.9.0 \
+          ghcr.io/appcd-dev/appcd-dist/appcd:v0.9.0 \
           generate --lang Python --output=artifact/main/.appcd/charts --iac-type Helm
           cd artifact/main/.appcd/charts
           unzip DogeAPI.zip && rm DogeAPI.zip
@@ -42,12 +42,13 @@ jobs:
         run: echo ${{ steps.extract_branch.outputs.branch }}
       - name: Generate IaC from PR branch
         run: |
+          docker pull ghcr.io/appcd-dev/appcd-dist/appcd:v0.9.0
           mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/
           docker run --rm \
           --workdir=/code  \
           -v ./pr_branch/:/code \
           -v ./artifact/${{ steps.extract_branch.outputs.branch }}:/artifact/${{ steps.extract_branch.outputs.branch }} \
-          ghcr.io/appcd-dev/appcd-dist/appcd@v0.9.0 \
+          ghcr.io/appcd-dev/appcd-dist/appcd:v0.9.0 \
           generate --lang Python --iac-type Helm --output=artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
           cd artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
           unzip DogeAPI.zip && rm DogeAPI.zip
