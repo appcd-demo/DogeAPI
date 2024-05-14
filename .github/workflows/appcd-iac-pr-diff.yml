@@ -1,8 +1,5 @@
 name: APPCD Diff check
 on:
-  push:
-    branches:
-      - feature/updated_gh_action
   pull_request:
     branches:
       - main
