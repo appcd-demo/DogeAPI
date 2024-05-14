@@ -89,6 +89,7 @@ jobs:
           cd ..
           mv artifact/${{ steps.extract_branch.outputs.branch }}/.appcd pr_branch/deployment_files/
           cd pr_branch
+          git add deployment_files/
           git diff --output=../diff.txt deployment_files/ | cat
           cat ../diff.txt
       - name: Comment PR with IaC Changes
