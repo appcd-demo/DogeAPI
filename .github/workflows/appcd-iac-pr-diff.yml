@@ -88,18 +88,19 @@ jobs:
       - name: Generate diff between Main and PR branch
         run: |
           mkdir -p pr_branch/deployment_files
-          mv ./artifact/main/.appcd pr_branch/deployment_files/
+          mv ./artifact/main/.appcd/charts/helm/scan_*/* pr_branch/deployment_files/
           cd pr_branch
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add deployment_files
           git commit -m "staging deployment files from main to compare them"
-          rm -rf deploment_files/*
-          rm -rf deployment_files/.appcd
+          rm -rf deploment_files
           cd ..
-          mv artifact/${{ steps.extract_branch.outputs.branch }}/.appcd pr_branch/deployment_files/
+          mkdir -p pr_branch/deployment_files/
+          cp -R artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts/helm/scan_*/* pr_branch/deployment_files/
           cd pr_branch
-          git diff --output=../diff.txt deployment_files/ | cat
+          git add .
+          git diff --staged --output=../diff.txt deployment_files/ | cat
           cat ../diff.txt
       - name: Comment PR with IaC Changes
         uses: actions/github-script@v6
