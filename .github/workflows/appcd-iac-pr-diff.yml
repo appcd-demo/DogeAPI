@@ -35,7 +35,8 @@ jobs:
           ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
           generate --mode ci --lang Python --log 2 --output=/artifact/main/.appcd/charts --iac-type Helm
           cd artifact/main/.appcd/charts
-          unzip code.zip && rm code.zip
+          ls -latr
+          unzip scan.zip && rm scan.zip
       - name: Upload logs
         uses: actions/upload-artifact@v2
         with:
@@ -69,7 +70,7 @@ jobs:
             ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
             generate --mode ci --lang Python --log 2 --iac-type Helm --output=/artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
           cd artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
-          unzip code.zip && rm code.zip
+          unzip scan.zip && rm scan.zip
       - name: Upload logs
         uses: actions/upload-artifact@v2
         with:
