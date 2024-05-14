@@ -28,7 +28,7 @@ jobs:
             --workdir=/code  \
             -e APPCD_TOKEN=$APPCD_TOKEN \
             -e APPCD_URL=$APPCD_URL \
-            -v ./main_branch:/code \
+            -v ./main_branch:/app/scan \
             -v ./artifact/main:/artifact/main \
             --entrypoint=appcd \
           ghcr.io/appcd-dev/appcd-dist/appcd-cli:v0.9.1 \
@@ -54,7 +54,7 @@ jobs:
           mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/
           docker run --rm \
             --workdir=/code  \
-            -v ./pr_branch/:/code \
+            -v ./pr_branch/:/app/scan \
             -v ./artifact/${{ steps.extract_branch.outputs.branch }}:/artifact/${{ steps.extract_branch.outputs.branch }} \
             -e APPCD_TOKEN=$APPCD_TOKEN \
             -e APPCD_URL=$APPCD_URL \
