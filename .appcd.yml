@@ -2,7 +2,7 @@ version: 0.0.1
 name: DogeApi
 services:
   dogeapi:
-    dtr: ghcr.io/appcd-dev/dogeapi/dogeapi
+    dtr: ghcr.io/appcd-demo/dogeapi/dogeapi
     path: /
     tag: latest
     language: Python
