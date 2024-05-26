@@ -19,7 +19,7 @@ jobs:
           ref: main
           path: main_branch
           fetch-depth: 1
-      - name: Generate IAC
+      - name: Generate IAC for main branch
         env:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
@@ -46,25 +46,17 @@ jobs:
         run: echo "branch=$(basename ${{ github.head_ref}})" >> $GITHUB_OUTPUT
       - name: echo branch name
         run: echo ${{ steps.extract_branch.outputs.branch }}
-      - name: Generate IaC from PR branch
+      - name: Generate IAC for PR branch
         env:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
-        run: |
-          docker pull ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli
-          mkdir -p artifact/${{ steps.extract_branch.outputs.branch }}/ ./artifact/tmp
-          docker run --rm \
-            --workdir=/app/scan  \
-            -v ./pr_branch/:/app/scan \
-            -v ./artifact/${{ steps.extract_branch.outputs.branch }}:/artifact/${{ steps.extract_branch.outputs.branch }} \
-            -v ./artifact/tmp:/tmp \
-            -e APPCD_TOKEN=$APPCD_TOKEN \
-            -e APPCD_URL=$APPCD_URL \
-            --entrypoint=appcd \
-            ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli \
-            generate --mode ci --log 2 --output=/artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
-          cd artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts
-          unzip scan.zip && rm scan.zip && ls -latr
+        uses: appcd-dev/action@v0.0.1
+        with:
+            cloud: 'aws'
+            language: 'Python'
+            outputDir: './artifact/${{ steps.extract_branch.outputs.branch }}'
+            scanPath: './pr_branch'
+            targetCompute: 'k8s'
       - name: Upload logs
         uses: actions/upload-artifact@v2
         with:
