@@ -2,7 +2,7 @@ name: APPCD Diff check
 on:
   push:
     branches:
-      - feature/sks-test
+      - feature/move_to_action
   pull_request:
     branches:
       - main
@@ -19,25 +19,17 @@ jobs:
           ref: main
           path: main_branch
           fetch-depth: 1
-      - name: Generate IaC from Main Branch
+      - name: Generate IAC
         env:
           APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
           APPCD_URL: ${{ secrets.APPCD_URL }}
-        run: |
-          docker pull ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli
-          mkdir -p artifact/main/ ./artifact/tmp
-          docker run --rm \
-            --workdir=/app/scan  \
-            -e APPCD_TOKEN=$APPCD_TOKEN \
-            -e APPCD_URL=$APPCD_URL \
-            -v ./main_branch:/app/scan \
-            -v ./artifact/tmp:/tmp \
-            -v ./artifact/main:/artifact/main \
-            --entrypoint=appcd \
-          ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli \
-          generate --log 2 --output=/artifact/main/.appcd/charts
-          cd artifact/main/.appcd/charts
-          unzip scan.zip && rm scan.zip && ls -latr && pwd
+        uses: appcd-dev/action@v0.0.1
+        with:
+            cloud: 'aws'
+            language: 'Python'
+            outputDir: './.appcd/charts'
+            scanPath: './main_branch'
+            targetCompute: 'k8s'
       - name: Upload logs
         uses: actions/upload-artifact@v2
         with:
