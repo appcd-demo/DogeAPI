@@ -27,14 +27,14 @@ jobs:
         with:
             cloud: 'aws'
             language: 'Python'
-            outputDir: './.appcd/charts'
+            outputDir: './artifact/main'
             scanPath: './main_branch'
             targetCompute: 'k8s'
-      - name: Upload logs
-        uses: actions/upload-artifact@v2
+      - name: Upload main artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: analyzer_logs_1
-          path: artifact
+          name: main_branch_artifacts
+          path: artifact/main
       - name: Checkout PR Branch
         uses: actions/checkout@v4
         with:
@@ -54,27 +54,27 @@ jobs:
         with:
             cloud: 'aws'
             language: 'Python'
-            outputDir: './artifact/${{ steps.extract_branch.outputs.branch }}'
+            outputDir: './artifact/pr_artifacts'
             scanPath: './pr_branch'
             targetCompute: 'k8s'
-      - name: Upload logs
-        uses: actions/upload-artifact@v2
+      - name: Upload PR artifacts
+        uses: actions/upload-artifact@v4
         with:
-          name: analyzer_logs_2
-          path: artifact
+          name: pr_branch_artifacts
+          path: ./artifact/pr_artifacts
       - name: Generate diff between Main and PR branch
         run: |
           mkdir -p pr_branch/deployment_files
-          mv ./artifact/main/.appcd/charts/helm/scan_*/* pr_branch/deployment_files/
+          mv ./artifact/main/ pr_branch/deployment_files/
           cd pr_branch
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "bot@appcd.com"
+          git config --local user.name "AppCD Bot"
           git add deployment_files
           git commit -m "staging deployment files from main to compare them"
           rm -rf deploment_files
           cd ..
           mkdir -p pr_branch/deployment_files/
-          cp -R artifact/${{ steps.extract_branch.outputs.branch }}/.appcd/charts/helm/scan_*/* pr_branch/deployment_files/
+          cp -R artifact/pr_artifacts/ pr_branch/deployment_files/
           cd pr_branch
           git add .
           git diff --staged --output=../diff.txt deployment_files/ | cat
