@@ -69,7 +69,7 @@ jobs:
           git add .
           git commit -m "staging deployment files from main to compare them"
           rm -rf *
-          cp -R ../pr_artifacts .
+          cp -R ../pr_artifacts/* .
           git add .
           git diff --staged --output=../../diff.txt . | cat
           cat ../../diff.txt
