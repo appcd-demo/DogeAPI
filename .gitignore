@@ -174,5 +174,4 @@ dev.pem
 .appcd/charts/
 cpg.bin
 analyzer.log
-helm
-terraform
+*.cpg.bin
