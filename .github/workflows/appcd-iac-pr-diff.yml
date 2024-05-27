@@ -64,21 +64,19 @@ jobs:
           path: ./artifact/pr_artifacts
       - name: Generate diff between Main and PR branch
         run: |
+          tree
           mkdir -p pr_branch/deployment_files
-          mv ./artifact/main/ pr_branch/deployment_files/
-          cd pr_branch
+          cd ./artifact/main/
+          git init
           git config --local user.email "bot@appcd.com"
           git config --local user.name "AppCD Bot"
-          git add deployment_files
-          git commit -m "staging deployment files from main to compare them"
-          rm -rf deploment_files
-          cd ..
-          mkdir -p pr_branch/deployment_files/
-          cp -R artifact/pr_artifacts/ pr_branch/deployment_files/
-          cd pr_branch
           git add .
-          git diff --staged --output=../diff.txt deployment_files/ | cat
-          cat ../diff.txt
+          git commit -m "staging deployment files from main to compare them"
+          rm -rf *
+          cp -R ../pr_artifacts .
+          git add .
+          git diff --staged --output=../../diff.txt . | cat
+          cat ../../diff.txt
       - name: Comment PR with IaC Changes
         uses: actions/github-script@v6
         with:
