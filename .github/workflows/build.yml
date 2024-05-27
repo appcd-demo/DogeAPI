@@ -17,12 +17,15 @@ jobs:
         run: make pull
       - name: Build image
         run: make build
-      - name: run appCD
-        run: |
-          docker pull ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli
-          docker run --rm \
-            --workdir=/app/scan  \
-            -v $PWD:/app/scan ghcr.io/appcd-dev/appcd-dist/appcd-cli:cli \
-            generate --lang Python --output=/code/.appcd/charts
-          cd .appcd/charts && ls
-          unzip code.zip && rm code.zip
+      - name: Generate IAC for main branch
+        env:
+          APPCD_TOKEN: ${{ secrets.APPCD_TOKEN }}
+          APPCD_URL: ${{ secrets.APPCD_URL }}
+        uses: appcd-dev/action@v0.0.1
+        with:
+            cloud: 'aws'
+            language: 'Python'
+            outputDir: './.appcd/charts'
+            scanPath: '.'
+            targetCompute: 'k8s'
+      
