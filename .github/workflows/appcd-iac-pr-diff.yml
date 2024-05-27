@@ -61,7 +61,6 @@ jobs:
           path: ./artifact/pr_artifacts
       - name: Generate diff between Main and PR branch
         run: |
-          tree
           mkdir -p pr_branch/deployment_files
           cd ./artifact/main/
           git init
